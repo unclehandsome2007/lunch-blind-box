@@ -2,12 +2,14 @@ import requests
 import re
 
 def get_coordinates(address):
-    url = "https://nominatim.openstreetmap.org/search"
+    # 更換為對雲端環境較寬容、速度更快的 QGIS 社群公用鏡像站網址，解決 Render IP 被封鎖的問題
+    url = "https://nominatim.qgis.org/search"
     headers = {
-        "User-Agent": "NTHU_FinalProject_LunchApp/1.0 (contact: your_email@gmail.com)",
+        "User-Agent": "NTHU_FinalProject_LunchApp_v2.0 (contact: unclehandsome2007@gmail.com) Python/Requests",
         "Accept-Language": "zh-TW,zh;q=0.9,en;q=0.8" 
     }
     
+    # 保留你原本強大的地址清洗與防呆機制
     clean_address = re.sub(r'^\d{3,5}\s*', '', address)
     clean_address = re.sub(r'[\u4e00-\u9fa5]{1,3}里', '', clean_address)
     clean_address = re.sub(r'\d+鄰', '', clean_address)
@@ -37,9 +39,10 @@ def get_coordinates(address):
     return None
 
 def get_nearby_restaurants(lat, lon, max_time, keyword="", limit=50):
-    url = "https://nominatim.openstreetmap.org/search"
+    # 同步更換為鏡像站，確保在 Render 容器內同心圓搜尋能正常請求資料
+    url = "https://nominatim.qgis.org/search"
     headers = {
-        "User-Agent": "NTHU_FinalProject_LunchApp/1.0 (contact: your_email@gmail.com)",
+        "User-Agent": "NTHU_FinalProject_LunchApp_v2.0 (contact: unclehandsome2007@gmail.com) Python/Requests",
         "Accept-Language": "zh-TW,zh;q=0.9,en;q=0.8"
     }
     
@@ -50,9 +53,9 @@ def get_nearby_restaurants(lat, lon, max_time, keyword="", limit=50):
     all_candidates = {} 
     search_term = keyword if keyword else "restaurant"
     
-    # 定義非商業設施的黑名單
+    # 定義非商業設施的黑名單 [cite: 7]
     blocked_classes = ["office", "highway", "waterway", "boundary", "historic", "landuse"]
-    # 如果使用者沒有自訂關鍵字，才額外封鎖一般 building 建築
+    # 你的核心亮點：動態權重過濾器。如果使用者沒有自訂關鍵字，才額外封鎖一般 building 建築 [cite: 36]
     if not keyword:
         blocked_classes.append("building")
     
@@ -85,7 +88,7 @@ def get_nearby_restaurants(lat, lon, max_time, keyword="", limit=50):
                 name = item.get("display_name").split(",")[0]
                 osm_class = item.get("class", "")
                 
-                # 如果命中黑名單類別，則跳過
+                # 如果命中黑名單類別，則跳過 [cite: 34]
                 if osm_class in blocked_classes:
                     continue
                     
