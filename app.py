@@ -14,12 +14,12 @@ app.json.ensure_ascii = False
 
 @app.route('/')
 def demo_page():
-    # 首頁現在導向你的 Proposal 展示頁面
+    # 首頁導向你的 Proposal 簡報兼展示頁
     return render_template('demo.html')
 
 @app.route('/app')
 def index():
-    # 原本的抽盲盒系統移到 /app
+    # 原本的抽盲盒系統主程式
     return render_template('index.html')
 
 @app.route('/draw_blind_box')
@@ -35,9 +35,10 @@ def draw_blind_box():
     if not address:
         return render_template('index.html', error="請輸入地址！")
 
+    # 本地展示：直接使用 Nominatim 進行最精準的地址經緯度轉換
     start_location = get_coordinates(address)
     if not start_location:
-        return render_template('index.html', error="找不到該地址，請嘗試輸入知名地標。")
+        return render_template('index.html', error="找不到該地址，請嘗試輸入知名地標（如：清華大學）。")
         
     start_lat = start_location["lat"]
     start_lon = start_location["lon"]
@@ -53,12 +54,12 @@ def draw_blind_box():
         max_time = int(max_time * 0.7)
         if max_time < 1: max_time = 1
     
+    # 執行你寫的同心圓搜尋與動態權重黑名單過濾機制
     candidates = get_nearby_restaurants(start_lat, start_lon, max_time=max_time, keyword=keyword, limit=50)
     if not candidates:
         return render_template('index.html', error=f"附近找不到符合「{keyword}」的餐廳。")
 
     valid_restaurants = []
-    # 請檢查或替換 app.py 內 draw_blind_box 函式中的多執行緒收集區塊：
     with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
         future_to_rest = {
             executor.submit(get_walking_time_and_route, start_lat, start_lon, r["lat"], r["lon"]): r 
@@ -68,7 +69,6 @@ def draw_blind_box():
             rest = future_to_rest[future]
             try:
                 route_info = future.result()
-                # 【優化：如果是手動輸入關鍵字，步行時間給予額外 2 分鐘的容錯空間，避免因為繞路圖資被一刀切】
                 allowed_time = max_time + 2 if keyword else max_time
                 if route_info and route_info["walking_minutes"] <= allowed_time:
                     rest["walking_minutes"] = route_info["walking_minutes"]
@@ -93,11 +93,10 @@ def draw_blind_box():
 
     chosen_restaurant = chosen_restaurants[0]
 
-    # app.py 裡面的對應呼叫部分
     map_html = generate_map(
         start_lat=start_lat, start_lon=start_lon, 
         dest_lat=chosen_restaurant["lat"], dest_lon=chosen_restaurant["lon"], 
-        geometry_geojson=chosen_restaurant["geometry"], # 傳入經緯度矩陣
+        geometry_geojson=chosen_restaurant["geometry"], 
         start_name=start_location["display_name"].split(",")[0],
         dest_name=chosen_restaurant["name"]
     )
@@ -110,7 +109,6 @@ def draw_blind_box():
                            all_restaurants=valid_restaurants, is_raining=is_raining, 
                            adjusted_time=max_time, keyword=keyword, is_fresh=is_fresh)
 
-# 【新增】供前端 JS 原地切換地圖使用的 API
 @app.route('/api/generate_map', methods=['POST'])
 def api_generate_map():
     data = request.json
@@ -159,5 +157,5 @@ def multi_draw():
     })
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port)
+    # 本地開發與展示預設使用 5000 埠口
+    app.run(host='0.0.0.0', debug=True, port=5000)
