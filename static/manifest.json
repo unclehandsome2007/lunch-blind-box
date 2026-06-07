@@ -1,0 +1,16 @@
+{
+    "name": "蛤又要吃午餐了",
+    "short_name": "午餐盲盒",
+    "description": "解決你的午餐選擇障礙！",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#f5f7fa",
+    "theme_color": "#ff6b6b",
+    "icons": [
+      {
+        "src": "https://cdn-icons-png.flaticon.com/512/3480/3480823.png",
+        "sizes": "512x512",
+        "type": "image/png"
+      }
+    ]
+  }

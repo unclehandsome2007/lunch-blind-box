@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html class="light" lang="zh-TW">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Lunch Blind Box - 每次午餐都是開盲盒的驚喜</title>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-fixed-variant": "#004881",
+                        "tertiary-container": "#00b179",
+                        "on-primary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed-variant": "#005236",
+                        "primary-fixed-dim": "#ffb3b0",
+                        "on-surface-variant": "#584140",
+                        "on-error-container": "#93000a",
+                        "surface-container": "#ffe9e7",
+                        "primary-container": "#ff6b6b",
+                        "outline-variant": "#e0bfbd",
+                        "secondary-fixed": "#d3e4ff",
+                        "inverse-surface": "#3b2d2c",
+                        "outline": "#8c706f",
+                        "surface-container-highest": "#f5dddb",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed-dim": "#52dea2",
+                        "inverse-on-surface": "#ffedeb",
+                        "primary-fixed": "#ffdad8",
+                        "inverse-primary": "#ffb3b0",
+                        "background": "#fff8f7",
+                        "on-surface": "#251818",
+                        "on-background": "#251818",
+                        "on-primary-container": "#6d0010",
+                        "surface-bright": "#fff8f7",
+                        "surface-variant": "#f5dddb",
+                        "surface-container-low": "#fff0ef",
+                        "secondary-container": "#3f9eff",
+                        "on-secondary-fixed": "#001c38",
+                        "on-secondary-container": "#00345f",
+                        "surface-dim": "#ecd5d3",
+                        "surface-container-high": "#fbe3e1",
+                        "on-primary-fixed-variant": "#8c1520",
+                        "on-tertiary-fixed": "#002113",
+                        "tertiary-fixed": "#72fbbc",
+                        "secondary": "#0060a9",
+                        "on-tertiary-container": "#003b26",
+                        "on-error": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "error": "#ba1a1a",
+                        "surface": "#fff8f7",
+                        "primary": "#ae2f34",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed": "#410006",
+                        "tertiary": "#006c48",
+                        "secondary-fixed-dim": "#a2c9ff",
+                        "surface-tint": "#ae2f34"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "20px",
+                        "max-width-desktop": "1200px",
+                        "lg": "40px",
+                        "margin-desktop": "auto",
+                        "xs": "8px",
+                        "xl": "64px",
+                        "margin-mobile": "20px",
+                        "base": "4px",
+                        "sm": "16px",
+                        "md": "24px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Noto Sans", "sans-serif"],
+                        "label-md": ["Noto Sans", "sans-serif"],
+                        "headline-lg-mobile": ["Plus Jakarta Sans", "sans-serif"],
+                        "headline-lg": ["Plus Jakarta Sans", "sans-serif"],
+                        "headline-md": ["Plus Jakarta Sans", "sans-serif"],
+                        "display-lg": ["Plus Jakarta Sans", "sans-serif"],
+                        "label-sm": ["Noto Sans", "sans-serif"],
+                        "body-lg": ["Noto Sans", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "label-md": ["14px", {"lineHeight": "1.2", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["28px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "headline-lg": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                        "label-sm": ["12px", {"lineHeight": "1.2", "fontWeight": "500"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 8px 32px rgba(174, 47, 52, 0.05);
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(135deg, #ae2f34, #ff6b6b);
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md antialiased pt-16 pb-24 md:pb-0 overflow-x-hidden relative">
+
+    <div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-primary-fixed/40 blur-[100px] opacity-60"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[60vw] h-[60vw] rounded-full bg-surface-variant/80 blur-[120px] opacity-70"></div>
+    </div>
+
+    <nav class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b border-white/20 shadow-sm transition-all duration-300" id="top-nav">
+        <div class="flex justify-between items-center max-w-desktop mx-auto px-margin-mobile md:px-margin-desktop h-16">
+            <a class="font-headline-md text-headline-md font-extrabold text-primary hover:opacity-80 transition-opacity" href="#">
+                又吃午餐
+            </a>
+            <div class="hidden md:flex space-x-xl items-center">
+                <a class="text-on-surface-variant hover:text-primary transition-all duration-300 hover:opacity-80 font-label-md text-label-md" href="#about">開發動機</a>
+                <a class="text-on-surface-variant hover:text-primary transition-all duration-300 hover:opacity-80 font-label-md text-label-md" href="#features">核心功能</a>
+                <a class="text-on-surface-variant hover:text-primary transition-all duration-300 hover:opacity-80 font-label-md text-label-md" href="#challenges">技術突破</a>
+            </div>
+            <button onclick="window.location.href='/app'" class="font-label-md text-label-md bg-primary text-on-primary px-sm py-xs rounded-full hover:bg-primary-container hover:text-on-primary-container transition-all duration-300 shadow-sm active:scale-95">
+                開始體驗
+            </button>
+        </div>
+    </nav>
+
+    <main class="max-w-desktop mx-auto px-margin-mobile md:px-margin-desktop w-full space-y-32 py-16">
+        
+        <section class="flex flex-col-reverse md:flex-row items-center justify-between gap-xl">
+            <div class="w-full md:w-1/2 flex flex-col items-start gap-md z-10">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-fixed text-on-primary-fixed-variant font-label-sm text-label-sm shadow-sm border border-white/50">
+                    <span class="material-symbols-outlined text-[16px]">celebration</span>
+                    專案展示 Proposal DEMO
+                </div>
+                <h1 class="font-display-lg text-display-lg text-on-background leading-tight">
+                    不再為午餐煩惱 <br/>
+                    <span class="text-gradient">開盲盒</span> 的驚喜體驗
+                </h1>
+                <p class="font-body-lg text-body-lg text-on-surface-variant max-w-md">
+                    結合「盲盒隨機推薦」、「精確步行時間計算」與「多人即時聚餐輔助」，只需拉動時間滑桿，系統自動幫你抽出完美午餐，確保不遲到、不踩雷。
+                </p>
+                <div class="flex flex-wrap items-center gap-sm mt-xs">
+                    <button onclick="window.location.href='/app'" class="h-[56px] px-8 rounded-full bg-primary text-on-primary font-label-md text-label-md flex items-center justify-center gap-2 hover:shadow-[0_8px_20px_rgba(174,47,52,0.3)] hover:-translate-y-1 transition-all duration-300 active:scale-95">
+                        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">restaurant</span>
+                        單人開抽
+                    </button>
+                    <button onclick="window.location.href='/app'" class="h-[56px] px-8 rounded-full bg-surface-container text-on-surface font-label-md text-label-md flex items-center justify-center gap-2 hover:bg-surface-variant transition-all duration-300 active:scale-95 border border-white/50 shadow-sm">
+                        <span class="material-symbols-outlined">group_add</span>
+                        多人連線
+                    </button>
+                </div>
+            </div>
+            <div class="w-full md:w-1/2 relative h-[400px] md:h-[500px]">
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-surface-container-high rounded-full blur-2xl opacity-60 mix-blend-multiply"></div>
+                <img alt="Healthy lunch bowl" class="w-full h-full object-cover rounded-[2rem] shadow-xl border-4 border-white/80 transform rotate-2 hover:rotate-0 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdbkxhXSevknJ70L3lyhWqP034NpJhCGHWh6PmDeJzU_2SiBSWMGaVF0jWgEtVJ5wcWn38jE7qlk2eb55bzMBzpX952u_G9z95bfeS7We_Fe7nt0DyxBoWNudDeqWbHYXIYYHSa4Y2_kgt0l2HyvVivN2OFcwRGIBGTyWGGEvO4kQknA48CS_n7fmsv3qnWioRQTykfLk-9JQBup0MTF4NJ9lyRAdDAffQ8f6tOXbsx6ID_xdSAUCHWXRHioyslKx7DjGuddUCEmw"/>
+                <div class="absolute -bottom-6 -left-6 glass-card p-4 rounded-2xl flex items-center gap-4 animate-bounce" style="animation-duration: 3s;">
+                    <div class="w-12 h-12 rounded-full bg-tertiary-container flex items-center justify-center text-on-tertiary-container">
+                        <span class="material-symbols-outlined">directions_walk</span>
+                    </div>
+                    <div>
+                        <p class="font-label-sm text-label-sm text-on-surface-variant">真實步行</p>
+                        <p class="font-label-md text-label-md text-on-surface">5 分鐘內抵達</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="relative" id="about">
+            <div class="glass-card rounded-[2rem] p-md md:p-xl flex flex-col md:flex-row gap-lg items-center relative overflow-hidden">
+                <div class="absolute -right-20 -top-20 w-64 h-64 bg-primary-fixed rounded-full blur-3xl opacity-50"></div>
+                <div class="w-full md:w-1/2 space-y-6">
+                    <h2 class="font-headline-lg-mobile md:font-headline-lg text-on-surface leading-tight">
+                        開發動機：為什麼需要 <br/> <span class="text-primary">Lunch Blind Box</span>
+                    </h2>
+                    <p class="font-body-md text-body-md text-on-surface-variant">
+                        每天過著規律的生活，心裡常吶喊著「今天想吃點別的」、「但我懶得想」。我們分析了日常午餐決策的核心痛點：
+                    </p>
+                    <ul class="space-y-4 font-body-md text-body-md text-on-surface">
+                        <li class="flex items-start gap-3">
+                            <span class="material-symbols-outlined text-primary mt-1">cancel</span>
+                            <span><strong>選擇障礙：</strong> 每天面臨嚴重的午餐選擇困難，不想重複吃昨天吃過的餐廳。</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="material-symbols-outlined text-primary mt-1">map</span>
+                            <span><strong>距離誤差：</strong> 錯誤估計直線距離與實際步行的落差，導致超過休息時間才匆忙趕去上課。</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="material-symbols-outlined text-primary mt-1">call_split</span>
+                            <span><strong>聚餐摩擦：</strong> 和同學一起吃飯需考量不同地點出發的距離，飯後還要處理繁瑣的買單平分計算。</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="w-full md:w-1/2 bg-surface-container-lowest rounded-3xl p-8 shadow-sm border border-surface-variant/50">
+                    <h3 class="font-headline-md text-headline-md text-on-surface mb-6 border-b border-surface-variant pb-4">我們的技術解決方案</h3>
+                    <div class="space-y-6">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-secondary-fixed flex items-center justify-center text-on-secondary-fixed-variant shadow-inner">
+                                <span class="material-symbols-outlined">casino</span>
+                            </div>
+                            <div>
+                                <h4 class="font-label-md text-label-md text-on-surface">智慧盲盒與足跡追蹤</h4>
+                                <p class="font-body-md text-label-sm text-on-surface-variant">利用 LocalStorage 紀錄多訪歷史足跡，抽取時自動略過最近吃過的 5 家餐廳。</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-tertiary-fixed flex items-center justify-center text-on-tertiary-fixed-variant shadow-inner">
+                                <span class="material-symbols-outlined">route</span>
+                            </div>
+                            <div>
+                                <h4 class="font-label-md text-label-md text-on-surface">OSRM 真實步行運算</h4>
+                                <p class="font-body-md text-label-sm text-on-surface-variant">針對候選名單進行真實物理路線計算，精準剔除超時選項。</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-primary-fixed flex items-center justify-center text-on-primary-fixed-variant shadow-inner">
+                                <span class="material-symbols-outlined">sync</span>
+                            </div>
+                            <div>
+                                <h4 class="font-label-md text-label-md text-on-surface">Firebase 即時同步</h4>
+                                <p class="font-body-md text-label-sm text-on-surface-variant">全體狀態鎖 (Locking) 與動畫同步，解決多人狀態不同步的痛點。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="space-y-8" id="features">
+            <div class="text-center space-y-4 mb-12">
+                <h2 class="font-headline-lg-mobile md:font-headline-lg text-on-background">為手機端優先優化的核心功能</h2>
+                <p class="font-body-md text-body-md text-on-surface-variant">PWA 行動平台化設計，提供極佳的手機端跨平台使用體驗。</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[250px]">
+                <div class="glass-card rounded-3xl p-6 md:col-span-2 flex flex-col justify-between group relative overflow-hidden">
+                    <div class="absolute -right-10 -top-10 w-48 h-48 bg-primary/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
+                    <div>
+                        <span class="material-symbols-outlined text-[40px] text-primary mb-4 block" style="font-variation-settings: 'FILL' 1;">redeem</span>
+                        <h3 class="font-headline-md text-headline-md text-on-surface mb-2">天氣連動防禦與互動地圖</h3>
+                        <p class="font-body-md text-body-md text-on-surface-variant max-w-sm">若所在地正在下雨，系統自動將可接受步行時間打 7 折。透過 Folium 生成動態 Leaflet 地圖，並提供外部 Google 或 Apple 導航一鍵跳轉。</p>
+                    </div>
+                    <div class="w-full h-2 bg-surface-variant rounded-full mt-auto overflow-hidden">
+                        <div class="h-full bg-primary w-2/3 rounded-full"></div>
+                    </div>
+                </div>
+                
+                <div class="glass-card rounded-3xl p-6 flex flex-col justify-between group">
+                    <div>
+                        <span class="material-symbols-outlined text-[32px] text-tertiary-container mb-4 block">insights</span>
+                        <h3 class="font-label-md text-label-md text-on-surface mb-2">消費大數據追蹤</h3>
+                        <p class="font-body-md text-label-sm text-on-surface-variant">足跡抽屜內引入 Chart.js 折線圖，動態呈現個人「本週午餐消費趨勢」。</p>
+                    </div>
+                </div>
+                
+                <div class="glass-card rounded-3xl p-6 flex flex-col justify-between group">
+                    <div>
+                        <span class="material-symbols-outlined text-[32px] text-secondary mb-4 block">devices</span>
+                        <h3 class="font-label-md text-label-md text-on-surface mb-2">即時位置清理</h3>
+                        <p class="font-body-md text-label-sm text-on-surface-variant">導入 onDisconnect() 離線清理機制，若滑掉網頁離開，其圖釘會自動拔除。</p>
+                    </div>
+                </div>
+                
+                <div class="glass-card rounded-3xl p-6 md:col-span-2 flex flex-col justify-between relative overflow-hidden bg-surface-container-low">
+                    <div class="absolute inset-0 bg-gradient-to-br from-transparent to-surface-container-high/50"></div>
+                    <div class="relative z-10 flex flex-col md:flex-row justify-between items-center h-full">
+                        <div class="mb-4 md:mb-0">
+                            <span class="material-symbols-outlined text-[40px] text-primary mb-4 block">account_balance_wallet</span>
+                            <h3 class="font-headline-md text-headline-md text-on-surface mb-2">群組分帳小幫手</h3>
+                            <p class="font-body-md text-body-md text-on-surface-variant max-w-xs">輸入這頓飯的總金額，系統會自動抓取當前連線人數，進行無條件進位的平分計算。</p>
+                        </div>
+                        <div class="flex -space-x-4">
+                            <div class="w-16 h-16 rounded-full border-4 border-surface bg-primary-container flex items-center justify-center text-on-primary-container font-label-md shadow-sm z-30">NT$120</div>
+                            <div class="w-16 h-16 rounded-full border-4 border-surface bg-secondary-container flex items-center justify-center text-on-secondary-container font-label-md shadow-sm z-20">NT$85</div>
+                            <div class="w-16 h-16 rounded-full border-4 border-surface bg-tertiary-container flex items-center justify-center text-on-tertiary-container font-label-md shadow-sm z-10">NT$150</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="space-y-8" id="challenges">
+            <div class="text-center space-y-4 mb-12">
+                <h2 class="font-headline-lg-mobile md:font-headline-lg text-on-background">開發遭遇困難與解決方案</h2>
+                <p class="font-body-md text-body-md text-on-surface-variant">實作過程中克服的開源圖資與即時系統技術瓶頸。</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="glass-card p-6 rounded-2xl border-l-4 border-l-primary">
+                    <h3 class="font-headline-md text-on-surface mb-2">1. OSRM 荒謬繞路防呆</h3>
+                    <p class="font-body-md text-on-surface-variant mb-4"><strong>困難：</strong> OSRM 導航引擎有時因缺乏巷弄標記，規劃出「繞大馬路一大圈才抵達」的超時路線。</p>
+                    <p class="font-body-md text-on-surface text-sm bg-surface-container p-3 rounded-lg"><strong>解決：</strong> 實作「直線防呆演算法」，若 OSRM 步行距離超過直線距離 3 倍，系統會沒收導航線並改用 1.2 倍直線距離保底計算。</p>
+                </div>
+                <div class="glass-card p-6 rounded-2xl border-l-4 border-l-secondary">
+                    <h3 class="font-headline-md text-on-surface mb-2">2. 底層經緯度格式衝突</h3>
+                    <p class="font-body-md text-on-surface-variant mb-4"><strong>困難：</strong> OSRM 回傳 GeoJSON 為 [經度, 緯度]，但 Folium/Leaflet 規定必須為 [緯度, 經度]，導致路線飄移。</p>
+                    <p class="font-body-md text-on-surface text-sm bg-surface-container p-3 rounded-lg"><strong>解決：</strong> 撰寫 Python 串列推導式 (List Comprehension)，在注入 Folium 前瞬間反轉節點座標矩陣，解決套件間格式衝突。</p>
+                </div>
+                <div class="glass-card p-6 rounded-2xl border-l-4 border-l-tertiary-container">
+                    <h3 class="font-headline-md text-on-surface mb-2">3. 圖資黑名單過度攔截</h3>
+                    <p class="font-body-md text-on-surface-variant mb-4"><strong>困難：</strong> 為避免抽到政府機關封鎖了 building 等標籤，但許多小吃店因此被誤殺，導致「找不到結果」。</p>
+                    <p class="font-body-md text-on-surface text-sm bg-surface-container p-3 rounded-lg"><strong>解決：</strong> 實作「動態權重過濾器」。當輸入明確食物關鍵字時自動放寬限制，無關鍵字隨機抽取則維持嚴格黑名單。</p>
+                </div>
+                <div class="glass-card p-6 rounded-2xl border-l-4 border-l-outline-variant">
+                    <h3 class="font-headline-md text-on-surface mb-2">4. 多人狀態競賽 (Race Condition)</h3>
+                    <p class="font-body-md text-on-surface-variant mb-4"><strong>困難：</strong> 多人房間中同時按「抽獎」會導致伺服器崩潰，且條件設定若只存網址會無法同步給新朋友。</p>
+                    <p class="font-body-md text-on-surface text-sm bg-surface-container p-3 rounded-lg"><strong>解決：</strong> 導入 Firebase「狀態鎖 (Locking) 機制」，全體強制鎖定並同步彈出黑屏動畫，並將設定全面雲端化收納於 Modal 中。</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="space-y-8">
+            <h2 class="font-headline-lg-mobile md:font-headline-lg text-center text-on-background">準備好抽出今天的午餐了嗎？</h2>
+            <div class="flex flex-col md:flex-row gap-6">
+                <div class="flex-1 glass-card rounded-[2rem] p-8 flex flex-col items-center text-center cursor-pointer hover:border-primary/50 transition-all duration-300 hover:shadow-[0_10px_40px_rgba(174,47,52,0.1)] group">
+                    <div class="w-24 h-24 rounded-full bg-surface-container-highest flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-sm border border-white">
+                        <span class="material-symbols-outlined text-[48px] text-on-surface-variant group-hover:text-primary transition-colors">person</span>
+                    </div>
+                    <h3 class="font-headline-md text-headline-md text-on-surface mb-2">單人模式</h3>
+                    <p class="font-body-md text-body-md text-on-surface-variant mb-6">利用專屬的時間滑桿，為自己抽出完美的個人午餐。</p>
+                    <button onclick="window.location.href='/app'" class="w-full h-12 rounded-xl border-2 border-outline-variant text-on-surface font-label-md text-label-md group-hover:bg-primary group-hover:border-primary group-hover:text-on-primary transition-colors duration-300">
+                        立即體驗
+                    </button>
+                </div>
+                <div class="flex-1 glass-card rounded-[2rem] p-8 flex flex-col items-center text-center cursor-pointer hover:border-primary/50 transition-all duration-300 hover:shadow-[0_10px_40px_rgba(174,47,52,0.1)] group bg-gradient-to-b from-transparent to-primary/5">
+                    <div class="w-24 h-24 rounded-full bg-primary-container flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-sm border border-white">
+                        <span class="material-symbols-outlined text-[48px] text-on-primary-container group-hover:animate-pulse">groups</span>
+                    </div>
+                    <h3 class="font-headline-md text-headline-md text-on-surface mb-2">多人連線</h3>
+                    <p class="font-body-md text-body-md text-on-surface-variant mb-6">透過原生分享代碼，和同事朋友即時連線同步抽出聚餐地點。</p>
+                    <button onclick="window.location.href='/app'" class="w-full h-12 rounded-xl bg-primary text-on-primary font-label-md text-label-md hover:bg-primary-container hover:text-on-primary-container transition-colors duration-300 shadow-sm">
+                        建立房間
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section class="max-w-2xl mx-auto">
+            <div class="glass-card rounded-3xl p-6 flex items-center gap-6 border-l-4 border-l-primary">
+                <div class="w-16 h-16 rounded-full bg-surface-variant flex-shrink-0 overflow-hidden shadow-inner border-2 border-white flex justify-center items-center text-primary font-bold text-xl">
+                    郭
+                </div>
+                <div>
+                    <h4 class="font-label-md text-label-md text-on-surface">期末專案 Final Project</h4>
+                    <p class="font-headline-md text-headline-md text-primary mt-1">114072205 郭宗佑</p>
+                    <p class="font-body-md text-label-sm text-on-surface-variant mt-2">結合現代化 Web 框架與地理資訊 API，打造解決日常痛點的輕量級互動應用程式。</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="w-full py-xl bg-surface-container-low mt-24">
+        <div class="max-w-desktop mx-auto flex flex-col md:flex-row justify-between items-center px-margin-mobile gap-6">
+            <div class="font-headline-md text-primary font-bold">
+                Lunch Blind Box
+            </div>
+            <div class="font-body-md text-body-md text-on-surface-variant text-center md:text-left">
+                © 2024 Lunch Blind Box. Designed by 郭宗佑.
+            </div>
+            <div class="flex gap-4">
+                <a class="font-body-md text-body-md text-on-surface-variant hover:text-secondary hover:underline transition-all" href="https://github.com" target="_blank">GitHub Repo</a>
+                <a class="font-body-md text-body-md text-on-surface-variant hover:text-secondary hover:underline transition-all" href="/app">Go to App</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Micro-interaction: Add slight shadow to TopNavBar on scroll
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('top-nav');
+            if (window.scrollY > 10) {
+                nav.classList.add('shadow-md');
+                nav.classList.remove('shadow-sm');
+            } else {
+                nav.classList.add('shadow-sm');
+                nav.classList.remove('shadow-md');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html class="font-sans text-neutral-900 bg-[#fff8f7]" lang="zh-TW">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
+    <link href="{{ url_for('static', filename='manifest.json') }}" rel="manifest" />
+    <meta content="#fff8f7" name="theme-color" />
+    <link href="https://cdn-icons-png.flaticon.com/512/3480/3480823.png" rel="apple-touch-icon" />
+    <title>蛤，又要吃午餐了？</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#ba1a1a',
+                        'primary-container': '#ffdad6',
+                        'on-primary-container': '#410002',
+                        secondary: '#775653',
+                        'secondary-container': '#ffdad6',
+                        'on-secondary-container': '#2c1513',
+                        surface: '#fff8f7',
+                        'surface-container': '#fceae8',
+                        outline: '#857371',
+                    },
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'], },
+                    borderRadius: { '4xl': '2rem', }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="min-h-screen pb-10">
+    <nav
+        class="sticky top-0 z-40 px-6 py-4 bg-surface/80 backdrop-blur-md flex justify-between items-center border-b border-surface-container">
+        <a class="text-xl font-bold tracking-tight flex items-center gap-2 text-primary" href="/">
+            <span class="material-symbols-outlined text-primary">restaurant</span>又吃午餐
+        </a>
+        <button
+            class="flex items-center gap-2 bg-surface-container hover:bg-surface-container-high px-4 py-2 rounded-full text-sm font-semibold text-secondary transition-colors"
+            onclick="openHistoryModal()">
+            <span class="material-symbols-outlined text-[20px]">history</span>歷史紀錄
+        </button>
+    </nav>
+
+    <div class="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] hidden opacity-0 transition-opacity duration-300"
+        id="historyOverlay" onclick="closeHistoryModal()"></div>
+
+    <div class="fixed bottom-0 left-0 w-full z-[100] bg-white rounded-t-3xl shadow-2xl transform translate-y-full transition-transform duration-300 ease-out flex flex-col max-h-[85vh]"
+        id="historySheet">
+        <div class="w-full flex justify-center py-4 cursor-pointer" onclick="closeHistoryModal()">
+            <div class="w-12 h-1.5 bg-gray-300 rounded-full"></div>
+        </div>
+
+        <div class="px-6 pb-10 overflow-y-auto w-full max-w-3xl mx-auto flex-1 no-scrollbar">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-900">飲食數據與足跡</h2>
+                <button class="p-2 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors"
+                    onclick="closeHistoryModal()">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+
+            <canvas class="w-full mb-8" id="expenseChart" style="max-height: 200px; display:none;"></canvas>
+
+            <div class="space-y-4 w-full" id="history-list"></div>
+
+            <div id="history-empty" class="hidden text-center py-12 text-gray-400 flex flex-col items-center">
+                <span class="material-symbols-outlined text-5xl mb-2 opacity-50">history</span>
+                <p class="font-medium">目前還沒有紀錄喔！<br>趕快抽一波午餐吧😋</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="gacha-overlay"
+        class="hidden fixed inset-0 z-50 bg-surface/90 backdrop-blur-sm flex-col items-center justify-center">
+        <div class="shake-box text-6xl mb-4">🎲</div>
+        <div class="gacha-text text-2xl font-bold text-primary tracking-widest">命運運算中...</div>
+    </div>
+
+    <main class="max-w-md mx-auto px-4 mt-8">
+        {% if restaurant or error %}
+        <div
+            class="bg-white rounded-[2rem] shadow-sm border border-surface-container p-6 animate-[fadeIn_0.5s_ease-out]">
+            <button
+                class="mb-6 flex items-center gap-2 text-secondary hover:text-gray-900 font-medium transition-colors"
+                onclick="window.location.href='/app'">
+                <span class="material-symbols-outlined">arrow_back</span>返回首頁
+            </button>
+
+            {% if is_raining %}
+            <div
+                class="mb-6 bg-blue-50 border border-blue-100 text-blue-800 px-4 py-3 rounded-2xl flex items-start gap-3">
+                <span class="material-symbols-outlined text-blue-600">water_drop</span>
+                <p class="text-sm leading-tight pt-0.5"><b>現在下雨：</b>已自動縮減尋找範圍為 {{ adjusted_time }} 分鐘。</p>
+            </div>
+            {% endif %}
+
+            {% if restaurant %}
+            <div class="mb-6 text-center">
+                <p class="text-sm font-medium text-secondary uppercase tracking-wider mb-2">今天吃</p>
+                <h2 class="text-3xl font-bold text-gray-900 mb-4" id="result-name">{{ restaurant.name }}</h2>
+                <div class="flex justify-center gap-4 text-sm bg-surface p-4 rounded-2xl border border-surface-container"
+                    id="result-details">
+                    <div class="text-center">
+                        <span class="material-symbols-outlined text-primary mb-1">directions_walk</span>
+                        <p class="font-bold text-gray-900 text-lg">{{ restaurant.walking_minutes }}<span
+                                class="text-xs font-normal text-gray-500 ml-1">分</span></p>
+                        <p class="text-xs text-gray-500">{{ restaurant.distance_meters }}m</p>
+                    </div>
+                    <div class="w-px bg-gray-200"></div>
+                    <div class="text-center">
+                        <span class="material-symbols-outlined text-orange-500 mb-1">local_fire_department</span>
+                        <p class="font-bold text-gray-900 text-lg">{{ restaurant.calories }}<span
+                                class="text-xs font-normal text-gray-500 ml-1">大卡</span></p>
+                        <p class="text-xs text-gray-500">預估消耗</p>
+                    </div>
+                </div>
+            </div>
+            <div class="rounded-3xl overflow-hidden border border-gray-100 shadow-sm mb-6 h-64 bg-gray-50 relative z-10"
+                id="map-container">{{ map_html | safe }}</div>
+            <div class="text-center mt-6">
+                <button
+                    class="w-full sm:w-auto px-8 py-3.5 rounded-full border-2 border-primary text-primary font-semibold hover:bg-primary hover:text-white transition-all active:scale-95"
+                    id="toggle-alt-btn" onclick="toggleAlternatives()">想換一家吃？</button>
+            </div>
+            <div class="mt-6 space-y-3" id="alternatives-panel" style="display: none;"></div>
+
+            <script>
+                const allDrawnRestaurants = {{ chosen_restaurants | tojson | safe if chosen_restaurants else '[]' }};
+                const startLat = {{ start_lat | default (0) }}; const startLon = {{ start_lon | default (0) }};
+                let currentRestIndex = 0;
+
+                // 加上事件監聽，確保 main.js 載入後才執行
+                document.addEventListener('DOMContentLoaded', () => {
+                    if (allDrawnRestaurants.length > 0) {
+                        if (typeof saveToHistory === 'function') saveToHistory(allDrawnRestaurants[0].name);
+                        renderAlternatives();
+                    }
+                });
+
+                function toggleAlternatives() {
+                    const panel = document.getElementById('alternatives-panel');
+                    const btn = document.getElementById('toggle-alt-btn');
+                    if (panel.style.display === 'none') {
+                        panel.style.display = 'block';
+                        btn.innerText = '隱藏備選名單';
+                    } else {
+                        panel.style.display = 'none';
+                        btn.innerText = '想換一家吃？';
+                    }
+                }
+
+                function renderAlternatives() {
+                    if (allDrawnRestaurants.length <= 1) return;
+                    let html = '';
+                    allDrawnRestaurants.forEach((alt, idx) => {
+                        if (idx !== currentRestIndex) {
+                            html += `<div class="bg-gray-50 p-4 rounded-2xl border border-gray-100 flex justify-between items-center hover:bg-gray-100 transition-colors">
+                                    <div>
+                                        <h4 class="font-semibold text-gray-900 text-base mb-1">${alt.name}</h4>
+                                        <p class="text-sm text-gray-500 flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">map</span> ${alt.distance_meters}m • ${alt.walking_minutes}分</p>
+                                    </div>
+                                    <button type="button" onclick="switchSingleRestaurant(${idx})" class="px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-full text-sm font-medium hover:bg-gray-50 shadow-sm transition-colors">切換</button>
+                                </div>`;
+                        }
+                    });
+                    document.getElementById('alternatives-panel').innerHTML = html;
+                }
+
+                async function switchSingleRestaurant(idx) {
+                    const oldRest = allDrawnRestaurants[currentRestIndex];
+                    const newRest = allDrawnRestaurants[idx];
+                    if (typeof removeHistoryByName === 'function') removeHistoryByName(oldRest.name);
+                    if (typeof saveToHistory === 'function') saveToHistory(newRest.name);
+                    currentRestIndex = idx;
+
+                    document.getElementById('result-name').innerHTML = newRest.name;
+                    document.getElementById('result-details').innerHTML = `
+                            <div class="text-center">
+                                <span class="material-symbols-outlined text-primary mb-1">directions_walk</span>
+                                <p class="font-bold text-gray-900 text-lg">${newRest.walking_minutes}<span class="text-xs font-normal text-gray-500 ml-1">分</span></p>
+                                <p class="text-xs text-gray-500">${newRest.distance_meters}m</p>
+                            </div>
+                            <div class="w-px bg-gray-200"></div>
+                            <div class="text-center">
+                                <span class="material-symbols-outlined text-orange-500 mb-1">local_fire_department</span>
+                                <p class="font-bold text-gray-900 text-lg">${newRest.calories}<span class="text-xs font-normal text-gray-500 ml-1">大卡</span></p>
+                                <p class="text-xs text-gray-500">預估消耗</p>
+                            </div>`;
+
+                    document.getElementById('map-container').innerHTML = '<div class="absolute inset-0 flex items-center justify-center bg-gray-50 bg-opacity-80 backdrop-blur-sm z-10"><p class="text-secondary font-medium flex items-center gap-2"><span class="material-symbols-outlined animate-spin">refresh</span>重新計算導航...</p></div>';
+                    const res = await fetch('/api/generate_map', {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ start_lat: startLat, start_lon: startLon, dest_lat: newRest.lat, dest_lon: newRest.lon, geometry: newRest.geometry, dest_name: newRest.name })
+                    });
+                    const data = await res.json();
+                    document.getElementById('map-container').innerHTML = data.map_html;
+                    renderAlternatives();
+                    toggleAlternatives();
+                }
+            </script>
+            {% elif error %}
+            <div class="bg-red-50 text-red-800 p-6 rounded-3xl text-center border border-red-100">
+                <span class="material-symbols-outlined text-4xl text-red-500 mb-2">sentiment_dissatisfied</span>
+                <h3 class="text-lg font-bold mb-2">找不到結果</h3>
+                <p class="text-sm opacity-80">{{ error }}</p>
+            </div>
+            {% endif %}
+        </div>
+        {% else %}
+        <div class="text-center mb-8 pt-4">
+            <h1 class="text-3xl font-bold tracking-tight text-gray-900 mb-2">不再為午餐煩惱</h1>
+            <p class="text-gray-500">自己吃、跟朋友揪，都沒問題。</p>
+        </div>
+        <div class="bg-gray-100 p-1.5 rounded-full flex mb-8 max-w-sm mx-auto shadow-inner relative">
+            <button
+                class="tab-btn active flex-1 py-3 text-sm font-semibold rounded-full transition-all text-gray-900 bg-white shadow-sm"
+                onclick="switchTab('single')">單人模式</button>
+            <button
+                class="tab-btn flex-1 py-3 text-sm font-semibold rounded-full transition-all text-gray-500 hover:text-gray-700"
+                onclick="switchTab('multi')">多人連線</button>
+        </div>
+
+        <div class="tab-content active bg-white rounded-[2rem] p-6 shadow-sm border border-surface-container"
+            id="single-tab">
+            <form action="/draw_blind_box" class="space-y-6" id="single-form" method="GET"
+                onsubmit="startGachaAnimation(event, 'single-form')">
+                <input id="history-input" name="history" type="hidden" value="" />
+                <div>
+                    <label class="block text-sm font-semibold text-gray-900 mb-2">您的位置</label>
+                    <div class="relative">
+                        <span
+                            class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">my_location</span>
+                        <input
+                            class="w-full pl-12 pr-4 py-4 bg-gray-50 border-transparent focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20 rounded-2xl transition-all outline-none"
+                            name="address" placeholder="如: 台北101" required="" type="text" />
+                    </div>
+                </div>
+                <div>
+                    <div class="flex justify-between items-end mb-4">
+                        <label class="block text-sm font-semibold text-gray-900">願意走多久？</label>
+                        <div class="text-primary font-bold text-xl"><span id="time-val">15</span><span
+                                class="text-sm font-normal text-gray-500 ml-1">分</span></div>
+                    </div>
+                    <input class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" max="60" min="1"
+                        name="max_time" oninput="document.getElementById('time-val').innerText = this.value"
+                        type="range" value="15" />
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-900 mb-2">想吃的種類 <span
+                            class="text-gray-400 font-normal">(選填)</span></label>
+                    <div class="relative">
+                        <span
+                            class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">restaurant_menu</span>
+                        <input
+                            class="w-full pl-12 pr-4 py-4 bg-gray-50 border-transparent focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20 rounded-2xl transition-all outline-none"
+                            name="keyword" placeholder="如: 便當、火鍋" type="text" />
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-900 mb-2">天氣模擬器</label>
+                    <div class="relative">
+                        <select class="w-full px-4 py-4 bg-gray-50 border-transparent focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20 rounded-2xl transition-all outline-none appearance-none bg-none" name="weather_override">
+                            <option value="auto">🌤️ 即時天氣</option>
+                            <option value="clear">☀️ 強制晴天</option>
+                            <option value="rain">🌧️ 強制下雨</option>
+                        </select>
+                        <span
+                            class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">expand_more</span>
+                    </div>
+                </div>
+                <button
+                    class="w-full py-4 bg-primary text-white font-bold rounded-2xl hover:bg-red-800 transition-colors shadow-sm active:scale-[0.98] flex items-center justify-center gap-2 text-lg mt-8"
+                    type="submit">
+                    <span class="material-symbols-outlined">casino</span>決定命運吧
+                </button>
+            </form>
+        </div>
+
+        <div class="tab-content hidden bg-white rounded-[2rem] p-6 shadow-sm border border-surface-container"
+            id="multi-tab">
+            <form action="/create_room" class="space-y-6" method="POST">
+                <div>
+                    <div class="flex justify-between items-end mb-4">
+                        <label class="block text-sm font-semibold text-gray-900">走路時間極限</label>
+                        <div class="text-secondary font-bold text-xl"><span id="multi-time-val">15</span><span
+                                class="text-sm font-normal text-gray-500 ml-1">分</span></div>
+                    </div>
+                    <input class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" max="60" min="1"
+                        name="max_time" oninput="document.getElementById('multi-time-val').innerText = this.value"
+                        style="accent-color: #775653;" type="range" value="15" />
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-900 mb-2">偏好種類 <span
+                            class="text-gray-400 font-normal">(選填)</span></label>
+                    <input
+                        class="w-full px-4 py-4 bg-gray-50 border-transparent focus:border-secondary focus:bg-white focus:ring-2 focus:ring-secondary/20 rounded-2xl transition-all outline-none"
+                        name="keyword" placeholder="如: 義大利麵" type="text" />
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-900 mb-2">天氣</label>
+                    <div class="relative">
+                        <select class="w-full px-4 py-4 bg-gray-50 border-transparent focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20 rounded-2xl transition-all outline-none appearance-none bg-none" name="weather_override">
+                            <option value="auto">🌤️ 即時天氣</option>
+                            <option value="clear">☀️ 強制晴天</option>
+                            <option value="rain">🌧️ 強制下雨</option>
+                        </select>
+                        <span
+                            class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">expand_more</span>
+                    </div>
+                </div>
+                <button
+                    class="w-full py-4 bg-secondary text-white font-bold rounded-2xl hover:bg-gray-800 transition-colors shadow-sm active:scale-[0.98] flex items-center justify-center gap-2 text-lg"
+                    type="submit">
+                    <span class="material-symbols-outlined">add_circle</span>建立房間
+                </button>
+            </form>
+            <div class="flex items-center my-8">
+                <div class="flex-grow h-px bg-gray-200"></div>
+                <span class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-widest">OR</span>
+                <div class="flex-grow h-px bg-gray-200"></div>
+            </div>
+            <div>
+                <label class="block text-sm font-semibold text-gray-900 mb-3">加入現有房間</label>
+                <div class="flex gap-3">
+                    <input
+                        class="flex-grow px-4 py-4 bg-gray-50 border-transparent focus:border-orange-500 focus:bg-white focus:ring-2 focus:ring-orange-500/20 rounded-2xl transition-all outline-none uppercase font-mono tracking-widest text-center"
+                        id="join-room-code" maxlength="6" placeholder="輸入 6 碼代碼" type="text" />
+                    <button
+                        class="px-6 py-4 bg-orange-500 text-white font-bold rounded-2xl hover:bg-orange-600 transition-colors shadow-sm active:scale-95 flex items-center justify-center"
+                        onclick="joinExistingRoom()" type="button">加入</button>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </main>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+        function joinExistingRoom() {
+            const code = document.getElementById('join-room-code').value.trim().toUpperCase();
+            if (code.length > 0) window.location.href = '/room/' + code;
+            else alert('請輸入代碼！');
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => { el.classList.add('hidden'); });
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('bg-white', 'shadow-sm', 'text-gray-900', 'active');
+                el.classList.add('text-gray-500');
+            });
+            document.getElementById(tabId + '-tab').classList.remove('hidden');
+            const activeBtn = event.currentTarget;
+            activeBtn.classList.remove('text-gray-500');
+            activeBtn.classList.add('bg-white', 'shadow-sm', 'text-gray-900', 'active');
+        }
+
+        function openHistoryModal() {
+            const overlay = document.getElementById('historyOverlay');
+            const sheet = document.getElementById('historySheet');
+
+            overlay.classList.remove('hidden');
+            void overlay.offsetWidth; // 強制重繪以觸發動畫
+            overlay.classList.remove('opacity-0');
+            sheet.classList.remove('translate-y-full');
+
+            // 直接呼叫 main.js 中的渲染函數
+            if (typeof renderHistory === 'function') renderHistory();
+        }
+
+        function closeHistoryModal() {
+            const overlay = document.getElementById('historyOverlay');
+            const sheet = document.getElementById('historySheet');
+
+            overlay.classList.add('opacity-0');
+            sheet.classList.add('translate-y-full');
+
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+            }, 300); // 等待 Tailwind 動畫播完再隱藏
+        }
+
+        function startGachaAnimation(event, formId) {
+            event.preventDefault();
+            document.getElementById('gacha-overlay').classList.remove('hidden');
+            document.getElementById('gacha-overlay').classList.add('flex');
+            const histInput = document.getElementById('history-input');
+            if (histInput) histInput.value = localStorage.getItem('lunch_history_v2') || '[]';
+            setTimeout(() => { document.getElementById(formId).submit(); }, 800);
+        }
+    </script>
+</body>
+
+</html>

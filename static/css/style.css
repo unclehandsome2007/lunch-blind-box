@@ -1,0 +1,62 @@
+/* style.css (搭配 Tailwind) */
+
+/* 隱藏捲軸，保持水平滾動乾淨 */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Glassmorphism 面板通用樣式 */
+.glass-panel {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+}
+
+/* 扭蛋機搖晃動畫 */
+.shake-box {
+    animation: shake 0.5s infinite;
+}
+@keyframes shake {
+    0% { transform: translate(1px, 1px) rotate(0deg); }
+    10% { transform: translate(-1px, -2px) rotate(-1deg); }
+    20% { transform: translate(-3px, 0px) rotate(1deg); }
+    30% { transform: translate(3px, 2px) rotate(0deg); }
+    40% { transform: translate(1px, -1px) rotate(1deg); }
+    50% { transform: translate(-1px, 2px) rotate(-1deg); }
+    60% { transform: translate(-3px, 1px) rotate(0deg); }
+    70% { transform: translate(3px, 1px) rotate(-1deg); }
+    80% { transform: translate(-1px, -1px) rotate(1deg); }
+    90% { transform: translate(1px, 2px) rotate(0deg); }
+    100% { transform: translate(1px, -2px) rotate(-1deg); }
+}
+
+
+.modal-overlay.active .bottom-sheet {
+    transform: translateY(0);
+}
+
+/* 歷史紀錄條目美化 */
+.history-card {
+    background: white; border: 1px solid #e5e7eb;
+    border-left: 5px solid #ba1a1a;
+    border-radius: 12px; padding: 15px; margin-bottom: 10px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+.history-card input[type="number"] {
+    padding: 6px; margin: 5px 0 0 0; width: 80px;
+    font-size: 14px; background: #f8f9fa;
+    border: 1px solid #ddd; border-radius: 6px;
+}
+
+/* Leaflet Popup 覆寫，讓地圖更現代化 */
+.leaflet-popup-content-wrapper {
+    border-radius: 12px !important;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+}
+.leaflet-popup-content {
+    margin: 15px !important;
+}
